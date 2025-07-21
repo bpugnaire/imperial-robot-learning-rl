@@ -24,6 +24,7 @@ cd robot-learning-project
 ### 2. Set up the environment
 
 We use uv for dependency management.
+To install uv got to https://docs.astral.sh/uv/getting-started/installation/
 
 ```
 uv venv
