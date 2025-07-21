@@ -1,0 +1,7 @@
+[project]
+name = "imperial-robot-learning-rl"
+version = "0.1.0"
+description = "Robot RL project with Q-learning on Adeept Arm"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []

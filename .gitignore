@@ -1,0 +1,15 @@
+# Byte-compiled / virtual environment
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv
+.uv
+
+# Data & logs
+data/
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
