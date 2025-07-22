@@ -12,9 +12,9 @@ The script will report the most likely port (Windows: COMx, Linux: /dev/ttyUSBx 
 import time
 from typing import Set
 try:
-    from pyserial.tools import list_ports
+    from serial.tools import list_ports
 except ImportError:
-    raise SystemExit("pip install pyserial")
+    raise SystemExit("could not import pyserial tools!")
 
 def snapshot_ports() -> Set[str]:
     return {p.device for p in list_ports.comports()}
