@@ -1,6 +1,6 @@
 # rl/train.py
 
-from rl.env import LidOpeningEnv
+from rl.lid_opening_env import LidOpeningEnv
 from rl.agent import QLearningAgent
 
 # Dummy robot and vision classes for now

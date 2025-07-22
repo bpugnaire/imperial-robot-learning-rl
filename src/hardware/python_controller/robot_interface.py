@@ -94,7 +94,7 @@ class Robot:
 if __name__ == '__main__':
     # This block will only run when robot_interface.py is executed directly.
     # Replace 'COM4' with your robot's actual serial port.
-    COM_PORT = 'COM4' 
+    COM_PORT = 'COM4'
 
     robot_joint = None
     try:

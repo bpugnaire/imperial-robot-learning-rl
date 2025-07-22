@@ -5,7 +5,10 @@ description = "Robot RL project with Q-learning on Adeept Arm"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "matplotlib>=3.10.3",
     "opencv-python>=4.12.0.88",
     "pyserial>=3.5",
     "serial>=0.0.97",
+    "pyrealsense2; sys_platform != 'darwin'",
+    "pyrealsense2-macosx; sys_platform == 'darwin'",
 ]

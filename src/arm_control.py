@@ -39,4 +39,3 @@ with serial.Serial(PORT, BAUD, timeout=1, write_timeout=1) as ser:
     send(ser, "get_val", 42)
     print("reply:", read_line(ser))
 
-
