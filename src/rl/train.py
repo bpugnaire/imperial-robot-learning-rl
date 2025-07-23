@@ -9,11 +9,11 @@ from vision.vision import VisionSystem
 
 
 port = "/dev/ttyACM0"
-
-robot = Robot(port=port, join_idx=3)
+bounds = [0.4, 1.1]
+robot = Robot(port=port, join_idx=3, bounds=bounds)
 vision = VisionSystem()
 vision.start()
-actions = [-5, 0, 5]  # Degrees to rotate the joint
+actions = [-10, 0, 10]  # Degrees to rotate the joint
 state_bins = [10, 30, 60, 90]  # Bin angle into discrete states
 
 env = LidOpeningEnv(robot, vision, actions)

@@ -29,7 +29,7 @@ class LidOpeningEnv:
         angle = self.vision.get_lid_angle(frame)
         self.state = angle
         return angle
-
+    
     def step(self, action_index):
         """
         Applies the action, observes new state, computes reward.

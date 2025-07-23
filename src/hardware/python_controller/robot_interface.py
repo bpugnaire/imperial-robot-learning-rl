@@ -42,7 +42,7 @@ class Robot():
     A dummy robot class that simulates robot actions for testing purposes.
     It conforms to the interface required by the LidOpeningEnv.
     """
-    def __init__(self, port, join_idx):
+    def __init__(self, port, join_idx, bounds):
         """
         Initializes the robot's state.
 
@@ -51,6 +51,7 @@ class Robot():
         """
 
         self.join_idx = join_idx
+        self.bounds = bounds
         self.bus = FeetechBus(port, [1, 2, 3, 4, 5, 6], calib_file="so101_calibration.json")
         print("Robot initialized.")
 
@@ -73,5 +74,12 @@ class Robot():
         
         current_pos = self._get_current_join_positions()
         target_pos = current_pos.copy()
-        target_pos[self.join_idx] += action
-        move_join(current_pos, target_pos, duration=2.0, steps=100)
+        next_move = target_pos[self.join_idx] + action
+        success = True
+        if self.bounds[0] <= next_move and next_move <= self.bounds[1]:
+            target_pos[self.join_idx] += action
+            move_join(current_pos, target_pos, duration=2.0, steps=100)
+            return success
+        return False
+            
+        
