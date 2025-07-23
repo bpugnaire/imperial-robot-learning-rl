@@ -36,7 +36,7 @@ class LidOpeningEnv:
         Returns: next_state, reward, done
         """
         action = self.action_space[action_index]
-        self.robot.move_joint(action)
+        success = self.robot.move_joint(action)
 
         time.sleep(1)  # Wait for motion & image stabilization
         frame = self.vision.get_frame()
@@ -47,6 +47,8 @@ class LidOpeningEnv:
         done = angle < self.angle_threshold
 
         self.state = angle
+        if not success:
+            reward = -1
         return angle, reward, done
 
     def compute_reward(self, angle):
