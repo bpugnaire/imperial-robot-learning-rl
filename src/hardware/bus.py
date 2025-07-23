@@ -80,7 +80,9 @@ class FeetechBus:
     def get_qpos(self, return_raw=False) -> np.ndarray:
         """Read Present_Position (radians)."""
         if self.reader.txRxPacket() != COMM_SUCCESS:
-            raise RuntimeError("Read failed")
+            self.reset()  # Attempt to reset communication if read fails
+            if self.reader.txRxPacket() != COMM_SUCCESS:
+                raise RuntimeError("Read failed after reset")
         raw = [self.reader.getData(i, *_CTL["Present_Position"]) for i in self.ids]
         raw = np.array(raw, dtype=np.int32)
         return raw if return_raw else self._raw_to_rad(raw)
@@ -111,3 +113,19 @@ class FeetechBus:
     def _rad_to_raw(self, rad: np.ndarray) -> np.ndarray:
         enc_val = (rad / _ENC2RAD) + 2048 + self._off_raw
         return np.clip(enc_val.round().astype(int), self._min_raw, self._max_raw)
+
+    def reset(self):
+        """Reset the communication port and SDK objects."""
+        self.port_handler.closePort()
+        time.sleep(0.5)
+        if not self.port_handler.openPort():
+            raise OSError("Cannot reopen port")
+        # Reinitialize reader and writer
+        addr_r, len_r = _CTL["Present_Position"]
+        self.reader = GroupSyncRead(self.port_handler, self.packet_handler, addr_r, len_r)
+        for i in self.ids:
+            self.reader.addParam(i)
+        addr_w, len_w = _CTL["Goal_Position"]
+        self.writer = GroupSyncWrite(self.port_handler, self.packet_handler, addr_w, len_w)
+        # Optionally, re-enable torque if needed
+        # self.set_torque(True)
