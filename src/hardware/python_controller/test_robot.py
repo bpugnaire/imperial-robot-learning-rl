@@ -9,9 +9,9 @@ if __name__ == "__main__":
 
     port = "/dev/ttyACM0"
 
-    robot = Robot(port=port, join_idx=3)
+    robot = Robot(port=port, join_idx=2)
     robot.reset_position()
     time.sleep(1)
-    robot.move_joint(degree_to_radian(5))
+    robot.move_joint(degree_to_radian(-20))
     time.sleep(1)
-    robot.move_joint(degree_to_radian(5))
+    robot.move_joint(degree_to_radian(-20))

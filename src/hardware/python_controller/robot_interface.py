@@ -1,8 +1,10 @@
 # robot.py
-import src.hardware.python_controller.bus as bus
+import bus
 from reset_positon import reset_robot_position
-from src.hardware.python_controller.bus import FeetechBus
-from src.hardware.python_controller.move_join import move_join
+from bus import FeetechBus
+from move_join import move_join
+
+
 class DummyRobot:
     """
     A dummy robot class that simulates robot actions for testing purposes.
@@ -61,8 +63,8 @@ class Robot():
         """
         reset_robot_position()
     
-    def _get_current_join_positions():
-        return bus.get_qpos()
+    def _get_current_join_positions(self):
+        return self.bus.get_qpos()
 
     def move_joint(self, action):
         """
@@ -78,8 +80,7 @@ class Robot():
         success = True
         if self.bounds[0] <= next_move and next_move <= self.bounds[1]:
             target_pos[self.join_idx] += action
-            move_join(current_pos, target_pos, duration=2.0, steps=100)
+            move_join(self.bus, current_pos, target_pos, duration=2.0, steps=100)
             return success
         return False
             
-        
