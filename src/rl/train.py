@@ -10,7 +10,8 @@ from vision.vision import VisionSystem
 
 port = "/dev/ttyACM0"
 bounds = [0.4, 1.1]
-robot = Robot(port=port, join_idx=3, bounds=bounds)
+# robot = Robot(port=port, join_idx=3, bounds=bounds)
+robot = DummyRobot()
 vision = VisionSystem()
 vision.start()
 actions = [-10, 0, 10]  # Degrees to rotate the joint

@@ -53,4 +53,4 @@ class LidOpeningEnv:
 
     def compute_reward(self, angle):
         # Reward is higher the more the lid is open (lower angle)
-        return angle - self.angle
+        return angle - self.state

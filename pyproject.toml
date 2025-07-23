@@ -11,4 +11,5 @@ dependencies = [
     "serial>=0.0.97",
     "pyrealsense2; sys_platform != 'darwin'",
     "pyrealsense2-macosx; sys_platform == 'darwin'",
+    "feetech-servo-sdk>=1.0.0",
 ]

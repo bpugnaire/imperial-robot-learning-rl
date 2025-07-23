@@ -79,6 +79,15 @@ wheels = [
 ]
 
 [[package]]
+name = "feetech-servo-sdk"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyserial" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5f/8e/c53d6f9a8bf3a86a635b58eeb675723f1b040f1665a0681467756c8989aa/feetech-servo-sdk-1.0.0.tar.gz", hash = "sha256:d4d3832e4b1b22a8222133a414db9f868224c2fb639426a1b11d96ddfe84e69c", size = 8392, upload-time = "2022-11-08T03:44:45.269Z" }
+
+[[package]]
 name = "fonttools"
 version = "4.59.0"
 source = { registry = "https://pypi.org/simple" }
@@ -133,6 +142,7 @@ name = "imperial-robot-learning-rl"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "feetech-servo-sdk" },
     { name = "matplotlib" },
     { name = "opencv-python" },
     { name = "pyrealsense2", marker = "sys_platform != 'darwin'" },
@@ -143,6 +153,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "feetech-servo-sdk", specifier = ">=1.0.0" },
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "opencv-python", specifier = ">=4.12.0.88" },
     { name = "pyrealsense2", marker = "sys_platform != 'darwin'" },
