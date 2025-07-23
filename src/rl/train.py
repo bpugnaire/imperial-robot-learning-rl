@@ -14,7 +14,7 @@ robot = Robot(port=port, join_idx=3, bounds=bounds)
 vision = VisionSystem()
 vision.start()
 actions = [-10, 0, 10]  # Degrees to rotate the joint
-state_bins = [10, 30, 60, 90]  # Bin angle into discrete states
+state_bins = [30, 50, 70, 90]  # Bin angle into discrete states
 
 env = LidOpeningEnv(robot, vision, actions)
 agent = QLearningAgent(state_bins=state_bins, num_actions=len(actions))

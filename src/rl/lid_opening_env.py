@@ -4,7 +4,7 @@ import random
 import time
 
 class LidOpeningEnv:
-    def __init__(self, robot, vision, action_space, angle_threshold=10):
+    def __init__(self, robot, vision, action_space, angle_threshold=90):
         """
         robot: object with move_joint(action) method
         vision: object with get_lid_angle() method
@@ -48,9 +48,9 @@ class LidOpeningEnv:
 
         self.state = angle
         if not success:
-            reward = -1
+            reward = -100
         return angle, reward, done
 
     def compute_reward(self, angle):
         # Reward is higher the more the lid is open (lower angle)
-        return max(0, 90 - angle) / 90.0
+        return angle - self.angle
