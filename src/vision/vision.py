@@ -184,17 +184,18 @@ class VisionSystem(Vision):
         # ellipse: ((cx, cy), (axis1, axis2), raw_angle)
         (_, (axis1, axis2), raw_angle) = ellipse
 
-        if axis1 >= axis2:
-            # The raw_angle corresponds to the major axis
-            angle_rad = math.radians(raw_angle)
-        else:
-            # The raw_angle corresponds to the minor axis, add 90 degrees
-            angle_rad = math.radians(raw_angle + 90)
+        # if axis1 >= axis2:
+        #     # The raw_angle corresponds to the major axis
+        #     angle_rad = math.radians(raw_angle)
+        # else:
+        #     # The raw_angle corresponds to the minor axis, add 90 degrees
+        #     angle_rad = math.radians(raw_angle + 90)
+        angle_rad = math.radians(raw_angle)
 
-        # Normalize angle to be acute (0-90 degrees) relative to horizontal
-        angle_deg = math.degrees(angle_rad) % 180
-        if angle_deg > 90:
-            angle_deg = 180 - angle_deg
+        # # Normalize angle to be acute (0-90 degrees) relative to horizontal
+        angle_deg = math.degrees(angle_rad)
+        # if angle_deg > 90:
+        #     angle_deg = 180 - angle_deg
 
         return angle_deg
 
