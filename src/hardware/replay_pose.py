@@ -18,7 +18,7 @@ JOINT_NAMES = [
     "gripper",
 ]
 
-def send_waypoints(bus, current_pos, target_pos, duration=2.0, steps=50):
+def send_waypoints(bus, current_pos, target_pos, duration=2.0, steps=100):
     """
     Sends a series of intermediate waypoints to smoothly move the arm.
 
