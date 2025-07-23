@@ -1,6 +1,9 @@
 # main.py
 import cv2
 import math
+import pyrealsense2 as rs
+import numpy as np
+
 
 class CubeLidVisionSystem:
     def __init__(self, camera_type='webcam', device_id=0):
@@ -19,23 +22,46 @@ class CubeLidVisionSystem:
         if self.camera_type == 'webcam':
             self.cap = cv2.VideoCapture(self.device_id)
         elif self.camera_type == 'realsense':
-            # Placeholder: initialize RealSense pipeline
-            raise NotImplementedError("RealSense support not implemented yet.")
+            self.pipeline = rs.pipeline()
+            self.config = rs.config()
+            self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+            self.pipeline.start(self.config)
         else:
             raise ValueError(f"Unknown camera type: {self.camera_type}")
 
     def stop(self):
         """Release camera resources."""
-        if self.cap:
-            self.cap.release()
-            self.cap = None
+        if self.camera_type == 'webcam':
+            if self.cap:
+                self.cap.release()
+                self.cap = None
+        elif self.camera_type == 'realsense':
+            if hasattr(self, 'pipeline'):
+                self.pipeline.stop()
 
     def get_frame(self):
         """Grab the latest frame from the camera."""
-        if not self.cap:
+        if self.camera_type == 'webcam':
+            if not self.cap:
+                return None
+            ret, frame = self.cap.read()
+            if ret:
+                frame = cv2.flip(frame, 1)  # Flip horizontally (vertical axis)
+            return frame if ret else None
+        elif self.camera_type == 'realsense':
+            try:
+                frames = self.pipeline.wait_for_frames()
+                color_frame = frames.get_color_frame()
+                if not color_frame:
+                    return None
+                # Use np.asanyarray for RealSense frame conversion
+                frame = np.asanyarray(color_frame.get_data())
+                frame = cv2.flip(frame, 1)  # Flip horizontally (vertical axis)
+                return frame
+            except Exception:
+                raise RuntimeError("Failed to grab frame from Realsense camera.")
+        else:
             return None
-        ret, frame = self.cap.read()
-        return frame if ret else None
 
     def get_lid_angle(self, frame):
         """Estimate the angle of the pink lid and return annotated frame and angle."""
@@ -85,10 +111,7 @@ class CubeLidVisionSystem:
 
         # Adjust angle range
         # OpenCV returns angle of the ellipse in degrees
-        if angle < -45:
-            display_angle = angle + 90
-        else:
-            display_angle = angle
+        display_angle = 90 - angle
         # annotated - just for debuging or illustration
         return annotated, display_angle
 
@@ -172,7 +195,7 @@ class CubeLidVisionSystem:
 
 
 if __name__ == "__main__":
-    system = CubeLidVisionSystem(camera_type='webcam', device_id=0)
+    system = CubeLidVisionSystem(camera_type='realsense', device_id=1)
     system.run(mode='angle')
 
 
