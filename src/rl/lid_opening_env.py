@@ -24,8 +24,9 @@ class LidOpeningEnv:
         Returns: initial state (angle)
         """
         self.robot.reset_position()
-        time.sleep(1)  
-        angle = self.vision.get_lid_angle()
+        time.sleep(1)
+        frame = self.vision.get_frame()
+        angle = self.vision.get_lid_angle(frame)
         self.state = angle
         return angle
 
@@ -38,9 +39,11 @@ class LidOpeningEnv:
         self.robot.move_joint(action)
 
         time.sleep(1)  # Wait for motion & image stabilization
-
-        angle = self.vision.get_lid_angle()
+        frame = self.vision.get_frame()
+        angle = self.vision.get_lid_angle(frame)
+        print(f"Lid angle:{angle}")
         reward = self.compute_reward(angle)
+        print(f"Reward collected:{reward}")
         done = angle < self.angle_threshold
 
         self.state = angle

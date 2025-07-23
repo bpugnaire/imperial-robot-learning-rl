@@ -4,12 +4,12 @@ from rl.lid_opening_env import LidOpeningEnv
 from rl.agent import QLearningAgent
 
 # Dummy robot and vision classes for now
-from hardware.python_controller.robot_interface import Robot
-from vision.camera_interface import Vision
+from hardware.python_controller.robot_interface import DummyRobot
+from vision.vision import VisionSystem
 
-robot = Robot()
-vision = Vision()
-
+robot = DummyRobot()
+vision = VisionSystem()
+vision.start()
 actions = [-5, 0, 5]  # Degrees to rotate the joint
 state_bins = [10, 30, 60, 90]  # Bin angle into discrete states
 
