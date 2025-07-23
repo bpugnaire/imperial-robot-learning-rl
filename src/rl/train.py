@@ -27,6 +27,7 @@ for episode in range(100):
     while not done:
         action = agent.choose_action(state)
         next_angle, reward, done = env.step(action)
+        vision.set_reward(reward)
         next_state = agent.discretize_state(next_angle)
 
         agent.update(state, action, reward, next_state)

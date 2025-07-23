@@ -268,12 +268,22 @@ class CubeLidVisionSystem:
         self.camera_type = camera_type
         self.device_id = device_id
         self.cap = None
+        self.current_lid_angle = None
+        self.current_reward = None
+        # For RealSense camera
+        self.pipeline = None
+        self.config = None
+
 
     def start(self):
         """Initialize the camera capture based on type."""
         if self.camera_type == 'webcam':
             self.cap = cv2.VideoCapture(self.device_id)
+            if not self.cap.isOpened():
+                raise IOError(f"Cannot open webcam with device_id {self.device_id}")
         elif self.camera_type == 'realsense':
+            # This block requires the pyrealsense2 library
+            import pyrealsense2 as rs
             self.pipeline = rs.pipeline()
             self.config = rs.config()
             self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
@@ -288,7 +298,7 @@ class CubeLidVisionSystem:
                 self.cap.release()
                 self.cap = None
         elif self.camera_type == 'realsense':
-            if hasattr(self, 'pipeline'):
+            if hasattr(self, 'pipeline') and self.pipeline:
                 self.pipeline.stop()
 
     def get_frame(self):
@@ -310,8 +320,9 @@ class CubeLidVisionSystem:
                 frame = np.asanyarray(color_frame.get_data())
                 frame = cv2.flip(frame, 1)  # Flip horizontally (vertical axis)
                 return frame
-            except Exception:
-                raise RuntimeError("Failed to grab frame from Realsense camera.")
+            except Exception as e:
+                print(f"Error grabbing frame from Realsense camera: {e}")
+                return None
         else:
             return None
 
@@ -328,12 +339,14 @@ class CubeLidVisionSystem:
         # Find contours
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if not contours:
+            self.current_lid_angle = None # Reset angle if lid not found
             return annotated, None
 
         # Assume largest contour is lid
         lid_contour = max(contours, key=cv2.contourArea)
         if len(lid_contour) < 5:
             # Not enough points to fit ellipse
+            self.current_lid_angle = None # Reset angle if contour is too small
             return annotated, None
 
         # Fit ellipse
@@ -364,7 +377,8 @@ class CubeLidVisionSystem:
         # Adjust angle range
         # OpenCV returns angle of the ellipse in degrees
         display_angle = 90 - angle
-        # annotated - just for debuging or illustration
+        # Update the instance variable for later use (e.g., in the run loop)
+        self.current_lid_angle = display_angle
         return annotated, display_angle
 
     def detect_objects(self, frame):
@@ -403,6 +417,10 @@ class CubeLidVisionSystem:
             detections.append({'label': label, 'centroid': (cx, cy), 'area': area})
 
         return annotated, detections
+    
+    def set_reward_value(self, reward):
+        """Method to update the reward value from an external source."""
+        self.current_reward = reward
 
     def run(self, mode='both'):
         """
@@ -419,28 +437,49 @@ class CubeLidVisionSystem:
                     break
 
                 annotated = frame.copy()
+                angle = None
+                detections = []
 
                 if mode in ('angle', 'both'):
-                    annotated_angle, angle = self.get_lid_angle(frame)
+                    # This call updates self.current_lid_angle internally
+                    annotated_angle, angle = self.get_lid_angle(annotated)
                     if angle is not None:
-                        print(f"Lid Angle: {angle:.2f} degrees")
                         annotated = annotated_angle
                     else:
-                        print("Lid not found.")
+                        # Lid not found, self.current_lid_angle is already None
+                        pass
 
                 if mode in ('detect', 'both'):
-                    annotated_detect, detections = self.detect_objects(frame)
+                    # The original frame is passed here to avoid drawing over angle annotations
+                    annotated_detect, detections = self.detect_objects(annotated)
                     annotated = annotated_detect
-                    if detections:
-                        print(f"Detected {len(detections)} objects:")
-                        for det in detections:
-                            print(f"  - {det['label']} at {det['centroid']}")
 
-                print("-" * 20)
+                # Get frame dimensions for text placement
+                height, width, _ = annotated.shape
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                font_scale = 1.5  
+                font_color = (0, 255, 0)  # White color for good contrast
+                bg_color = (0, 0, 0) # Black background for text
+                thickness = 2
+                
+                # Display Current Reward
+                reward_text = f"Reward: {'N/A' if self.current_reward is None else f'{self.current_reward:.2f}'}"
+                (w, h), _ = cv2.getTextSize(reward_text, font, font_scale, thickness)
+                cv2.rectangle(annotated, (width - w - 20, 10), (width - 10, 10 + h + 10), bg_color, -1)
+                cv2.putText(annotated, reward_text, (width - w - 15, 15 + h), font, font_scale, font_color, thickness)
 
+                # Display Current Lid Angle
+                angle_text = f"Lid Angle: {'N/A' if self.current_lid_angle is None else f'{self.current_lid_angle:.2f}'}"
+                (w, h), _ = cv2.getTextSize(angle_text, font, font_scale, thickness)
+                cv2.rectangle(annotated, (width - w - 20, 50), (width - 10, 50 + h + 10), bg_color, -1)
+                cv2.putText(annotated, angle_text, (width - w - 15, 55 + h), font, font_scale, font_color, thickness)
+                # --- END OF NEW CODE ---
+
+                # Display the final annotated frame
                 cv2.imshow("Vision System Output", annotated)
+
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
         finally:
             self.stop()
-            cv2.destroyAllWindows()
+            cv2.destroyAllWindows() 
