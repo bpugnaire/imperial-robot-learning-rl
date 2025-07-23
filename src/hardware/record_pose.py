@@ -3,7 +3,7 @@
 
 import argparse
 import json
-from bus import FeetechBus
+from src.hardware.python_controller.bus import FeetechBus
 
 # Define the names of the joints in order from base to gripper.
 # This should match the order of the servo IDs provided.

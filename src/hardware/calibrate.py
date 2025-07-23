@@ -3,7 +3,7 @@
 
 import argparse
 import json
-from bus import FeetechBus
+from src.hardware.python_controller.bus import FeetechBus
 
 JOINT_NAMES = [
     "shoulder_pan",

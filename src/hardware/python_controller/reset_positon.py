@@ -38,7 +38,7 @@ def send_waypoints(bus, current_pos, target_pos, duration=2.0, steps=100):
         time.sleep(delay)
     print("Movement complete.")
 
-def main():
+def reset_robot_position():
     """
     Main function to load a pose and move the arm.
     """
@@ -46,7 +46,7 @@ def main():
     ap = argparse.ArgumentParser(
         description="Load a saved pose from a JSON file and move the arm to that position."
     )
-    ap.add_argument("filename",
+    ap.add_argument("--filename", default="start_pose.json",
                     help="Path to the input JSON file containing the target pose.")
     ap.add_argument("--port", default="/dev/ttyACM0",
                     help="The serial port for the Feetech bus.")

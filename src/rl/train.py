@@ -4,10 +4,13 @@ from rl.lid_opening_env import LidOpeningEnv
 from rl.agent import QLearningAgent
 
 # Dummy robot and vision classes for now
-from hardware.python_controller.robot_interface import DummyRobot
+from hardware.python_controller.robot_interface import DummyRobot, Robot
 from vision.vision import VisionSystem
 
-robot = DummyRobot()
+
+port = "/dev/ttyACM0"
+
+robot = Robot(port=port, join_idx=3)
 vision = VisionSystem()
 vision.start()
 actions = [-5, 0, 5]  # Degrees to rotate the joint

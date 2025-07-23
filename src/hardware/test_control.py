@@ -2,7 +2,7 @@
 import time 
 import json 
 import numpy as np
-from bus import FeetechBus
+from src.hardware.python_controller.bus import FeetechBus
 
 with open('so101_motorbus_port.json') as f: 
     port = json.load(f)['port']
