@@ -1,6 +1,6 @@
 import time
 
-def move_join(bus, current_pos, target_pos, duration=2.0, steps=100):
+def move_join(bus, current_pos, target_pos, duration=1.0, steps=100):
     """
     Sends a series of intermediate waypoints to smoothly move the arm.
 
