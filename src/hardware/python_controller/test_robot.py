@@ -1,5 +1,5 @@
 import time
-from robot_interface import Robot
+from src.hardware.python_controller.robot_interface import Robot
 import math
 
 def degree_to_radian(deg):
@@ -8,8 +8,8 @@ def degree_to_radian(deg):
 if __name__ == "__main__":
 
     port = "/dev/ttyACM0"
-
-    robot = Robot(port=port, join_idx=2)
+    bounds = [0.4, 1.1]
+    robot = Robot(port=port, join_idx=2, bounds=bounds)
     robot.reset_position()
     time.sleep(1)
     robot.move_joint(degree_to_radian(-20))
