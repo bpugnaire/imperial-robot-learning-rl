@@ -334,7 +334,7 @@ class CubeLidVisionSystem:
         
         # Always resize to a standard dimension for consistency
         if frame is not None:
-            return cv2.resize(frame, (640, 480))
+            return cv2.resize(frame, (1280, 720))
         return None
 
     def _get_lid_angle(self, frame):
@@ -363,7 +363,7 @@ class CubeLidVisionSystem:
 
         overlay = frame.copy()
         num_states, num_actions = self.q_table.shape
-        start_x, start_y, cell_w, cell_h, header_h = 20, 70, 100, 50, 45
+        start_x, start_y, cell_w, cell_h, header_h = 600, 100, 100, 50, 45
         min_q, max_q = np.min(self.q_table), np.max(self.q_table)
 
         for i, action in enumerate(self.actions):

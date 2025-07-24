@@ -19,8 +19,8 @@ vision = CubeLidVisionSystem(camera_type='realsense', device_id=1)
 # # robot = DummyRobot()
 # vision = CubeLidVisionSystem(camera_type='realsense', device_id=1)
 
-actions = [-5, 0, 5]  # Degrees to rotate the joint
-state_bins = [30, 50, 70, 100]  # Bin angle into discrete states
+actions = [-10, 0, 10]  # Degrees to rotate the joint
+state_bins = list(range(10, 50, 10))  # Bin angle into discrete states
 
 env = LidOpeningEnv(robot, vision, actions, angle_threshold=80)
 agent = QLearningAgent(state_bins=state_bins, num_actions=len(actions))
@@ -31,7 +31,7 @@ try:
     vision.set_q_learning_info(agent.q_table, state_bins, actions)
     
     quit_signal_received = False
-    for episode in range(100):
+    for episode in range(20):
         state = agent.discretize_state(env.reset())
         print("this is the state from dicretize", state)
 
