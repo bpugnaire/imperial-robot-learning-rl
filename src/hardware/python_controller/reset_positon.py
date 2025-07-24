@@ -5,7 +5,7 @@ import argparse
 import json
 import time
 import numpy as np
-from src.hardware.python_controller.bus import FeetechBus
+from hardware.python_controller.bus import FeetechBus
 
 # Define the names of the joints in order from base to gripper.
 # This is used to ensure the joint angles from the file are applied correctly.

@@ -5,7 +5,7 @@ import argparse
 import json
 import time
 import numpy as np
-from src.hardware.python_controller.bus import FeetechBus
+from hardware.python_controller.bus import FeetechBus
 import threading
 import sys
 import termios

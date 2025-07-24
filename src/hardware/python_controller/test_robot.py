@@ -1,5 +1,5 @@
 import time
-from src.hardware.python_controller.robot_interface import Robot
+from hardware.python_controller.robot_interface import Robot
 import math
 
 def degree_to_radian(deg):
