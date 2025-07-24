@@ -14,6 +14,11 @@ robot = Robot(port=port, join_idx=2, bounds=bounds)
 # robot = DummyRobot()
 vision = CubeLidVisionSystem(camera_type='realsense', device_id=1)
 
+# bounds = [0.0, 1.5]
+# robot = Robot(port=port, join_idx=5, bounds=bounds)
+# # robot = DummyRobot()
+# vision = CubeLidVisionSystem(camera_type='realsense', device_id=1)
+
 actions = [-5, 0, 5]  # Degrees to rotate the joint
 state_bins = [30, 50, 70, 100]  # Bin angle into discrete states
 
