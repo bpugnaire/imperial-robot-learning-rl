@@ -30,3 +30,10 @@ To install `uv` go to https://docs.astral.sh/uv/getting-started/installation/
 uv venv
 uv pip install -e .
 ```
+
+### 3. Run Q-learning 
+
+
+```
+uv run -m rl.train
+```
