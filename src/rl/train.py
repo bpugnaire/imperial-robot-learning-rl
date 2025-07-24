@@ -10,11 +10,11 @@ from src.vision.vision import CubeLidVisionSystem
 
 port = "/dev/ttyACM0"
 bounds = [0.4, 1.1]
-# robot = Robot(port=port, join_idx=3, bounds=bounds)
-robot = DummyRobot()
-vision = CubeLidVisionSystem()
+robot = Robot(port=port, join_idx=2, bounds=bounds)
+# robot = DummyRobot()
+vision = CubeLidVisionSystem(camera_type='realsense', device_id=1)
 
-actions = [-10, 0, 10]  # Degrees to rotate the joint
+actions = [-5, 0, 5]  # Degrees to rotate the joint
 state_bins = [30, 50, 70, 100]  # Bin angle into discrete states
 
 env = LidOpeningEnv(robot, vision, actions, angle_threshold=80)
@@ -34,10 +34,11 @@ try:
 
         while not done:
             # Wait for user to press Enter before proceeding to the next action
-            input("Press Enter to perform the next action...")
+            # input("Press Enter to perform the next action...")
 
             # The agent gives us the index of the action to take
             action_index = agent.choose_action(state)
+            print(f"Episode {episode}, State: {state}, Action Index: {action_index}")
             next_angle, reward, done = env.step(action_index)
             
             # Update the vision system with the latest information
@@ -48,7 +49,7 @@ try:
                 print(f"Episode {episode} finished with reward {reward}.")
                 # Update display one last time before breaking
                 vision.update_display()
-                time.sleep(1) # Pause for a moment on the final state
+                # time.sleep(1) # Pause for a moment on the final state
                 break
 
             next_state = agent.discretize_state(next_angle)

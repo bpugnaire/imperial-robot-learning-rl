@@ -39,8 +39,8 @@ class LidOpeningEnv:
         """
         action = self.action_space[action_index]
         allowed_move = self.robot.move_joint(action)
-
-        time.sleep(1)  # Wait for motion & image stabilization
+        print(f"Action taken: {action} degrees, Allowed: {allowed_move}")
+        time.sleep(.1)  # Wait for motion & image stabilization
         frame = self.vision._get_frame()
         self.vision._get_lid_angle(frame)
         angle = self.vision.current_lid_angle

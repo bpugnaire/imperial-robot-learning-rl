@@ -66,8 +66,8 @@ class Robot():
     
     def _get_current_join_positions(self):
         return self.bus.get_qpos()
-    
-    def degree_to_radian(deg):
+
+    def degree_to_radian(self, deg):
         return math.pi * deg / 180
     
     def move_joint(self, action):
@@ -80,11 +80,14 @@ class Robot():
         
         current_pos = self._get_current_join_positions()
         target_pos = current_pos.copy()
+        print("Current angle:", target_pos[self.join_idx])
         next_move = target_pos[self.join_idx] + self.degree_to_radian(action)
         success = True
+        print(f"Attempting to move joint {self.join_idx} by {action} degrees from {target_pos[self.join_idx]} to {next_move:.2f} radians.")
+        print("Checking bounds:", self.bounds, self.bounds[0] <= next_move, next_move <= self.bounds[1])
         if self.bounds[0] <= next_move and next_move <= self.bounds[1]:
-            target_pos[self.join_idx] += self.degree_to_radian(action)
-            move_join(self.bus, current_pos, target_pos, duration=2.0, steps=100)
+            target_pos[self.join_idx] = next_move
+            move_join(self.bus, current_pos, target_pos, duration=1.0, steps=100)
             return success
         return False
             
