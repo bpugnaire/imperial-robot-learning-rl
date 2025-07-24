@@ -44,7 +44,7 @@ try:
             if done:
                 print(f"Episode {episode} finished with reward {reward}.")
                 # Update display one last time before breaking
-                # vision.update_display()
+                vision.update_display()
                 time.sleep(1) # Pause for a moment on the final state
                 break
 

@@ -355,8 +355,12 @@ class CubeLidVisionSystem:
             cv2.putText(overlay, f"A: {action}", (x + 5, start_y + header_h - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255), 1)
 
         for s_idx in range(num_states):
-            state_label = f"S{s_idx} (<{self.state_bins[s_idx]})"
-            cv2.putText(overlay, state_label, (start_x, start_y + header_h + s_idx * cell_h + cell_h//2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255), 1)
+            if s_idx < len(self.state_bins):
+                state_label = f"S{s_idx} (<{self.state_bins[s_idx]})"
+            else:
+                # This handles the last state, which is for angles >= the last bin value
+                state_label = f"S{s_idx} (>{self.state_bins[-1]})"            
+                cv2.putText(overlay, state_label, (start_x, start_y + header_h + s_idx * cell_h + cell_h//2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255), 1)
             for a_idx in range(num_actions):
                 q_value = self.q_table[s_idx, a_idx]
                 normalized_q = (q_value - min_q) / (max_q - min_q + 1e-7)
