@@ -353,7 +353,7 @@ class CubeLidVisionSystem:
                 cv2.ellipse(annotated, ellipse, (0, 255, 0), 2)
                 angle = ellipse[2]
         
-        self.current_lid_angle = angle if angle else self.current_lid_angle
+        self.current_lid_angle = angle - 90 if angle else self.current_lid_angle
         return annotated
 
     def _draw_q_table(self, frame):
