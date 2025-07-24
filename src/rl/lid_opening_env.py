@@ -16,7 +16,7 @@ class LidOpeningEnv:
         self.action_space = action_space
         self.angle_threshold = angle_threshold
 
-        self.state = None
+        self.state = 0
 
     def reset(self):
         """
@@ -25,8 +25,10 @@ class LidOpeningEnv:
         """
         self.robot.reset_position()
         time.sleep(1)
-        frame = self.vision.get_frame()
-        angle = self.vision.get_lid_angle(frame)
+        frame = self.vision._get_frame()
+        
+        self.vision._get_lid_angle(frame)
+        angle = self.vision.current_lid_angle
         self.state = angle
         return angle
     
@@ -39,12 +41,14 @@ class LidOpeningEnv:
         allowed_move = self.robot.move_joint(action)
 
         time.sleep(1)  # Wait for motion & image stabilization
-        frame = self.vision.get_frame()
-        angle = self.vision.get_lid_angle(frame)
+        frame = self.vision._get_frame()
+        self.vision._get_lid_angle(frame)
+        angle = self.vision.current_lid_angle
+
         print(f"Lid angle:{angle}")
         reward = self.compute_reward(angle)
         print(f"Reward collected:{reward}")
-        done = angle >= self.angle_threshold
+        done = (angle >= self.angle_threshold)
 
         self.state = angle
         if not allowed_move:

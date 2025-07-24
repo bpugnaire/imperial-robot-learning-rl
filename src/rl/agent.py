@@ -19,6 +19,7 @@ class QLearningAgent:
 
     def discretize_state(self, angle):
         """Convert continuous angle into discrete state"""
+        print("supposed to be an angle" , angle)
         return np.digitize(angle, self.state_bins)
 
     def choose_action(self, state):
