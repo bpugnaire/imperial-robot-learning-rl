@@ -14,4 +14,8 @@ dependencies = [
     "feetech-servo-sdk>=1.0.0",
 ]
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-dir]
+"" = "."

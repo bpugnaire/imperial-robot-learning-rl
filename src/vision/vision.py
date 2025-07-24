@@ -297,15 +297,17 @@ class CubeLidVisionSystem:
         self.current_reward = reward
 
     def start(self):
-        """Initialize the camera."""
-        if self.camera_type == 'webcam':
+        """Initializes and starts the camera stream."""
+        if self.camera_type == 'realsense':
+            self.pipeline = rs.pipeline()
+            config = rs.config()
+            config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+            self.pipeline.start(config)
+        else: # webcam
             self.cap = cv2.VideoCapture(self.device_id)
             if not self.cap.isOpened():
                 raise IOError(f"Cannot open webcam with device_id {self.device_id}")
-        # ... (RealSense initialization would go here)
-        else:
-            raise ValueError(f"Unknown camera type: {self.camera_type}")
-        print("Vision system started.")
+        print(f"{self.camera_type.capitalize()} camera started.")
 
     def stop(self):
         """Release camera resources and close windows."""
@@ -315,11 +317,25 @@ class CubeLidVisionSystem:
         print("Vision system stopped.")
 
     def _get_frame(self):
-        """Internal method to grab a frame from the camera."""
-        if not self.cap or not self.cap.isOpened(): return None
-        ret, frame = self.cap.read()
-        if ret: frame = cv2.flip(frame, 1)
-        return frame if ret else None
+        """
+        Captures and returns a single frame from the camera.
+        Returns None if the frame cannot be captured.
+        """
+        frame = None
+        if self.camera_type == 'realsense':
+            frames = self.pipeline.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            if color_frame:
+                frame = np.asanyarray(color_frame.get_data())
+        else: # webcam
+            ret, frame = self.cap.read()
+            if not ret:
+                return None
+        
+        # Always resize to a standard dimension for consistency
+        if frame is not None:
+            return cv2.resize(frame, (640, 480))
+        return None
 
     def _get_lid_angle(self, frame):
         """Internal method to process lid angle."""
@@ -337,7 +353,7 @@ class CubeLidVisionSystem:
                 cv2.ellipse(annotated, ellipse, (0, 255, 0), 2)
                 angle = ellipse[2]
         
-        self.current_lid_angle = angle if angle else self.current_lid_angle
+        self.current_lid_angle = angle - 90 if angle else self.current_lid_angle
         return annotated
 
     def _draw_q_table(self, frame):
