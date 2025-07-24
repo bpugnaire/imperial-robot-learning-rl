@@ -3,6 +3,7 @@ import src.hardware.python_controller.bus as bus
 from src.hardware.python_controller.reset_positon import reset_robot_position
 from src.hardware.python_controller.bus import FeetechBus
 from src.hardware.python_controller.move_join import move_join
+import math
 
 
 class DummyRobot:
@@ -65,7 +66,10 @@ class Robot():
     
     def _get_current_join_positions(self):
         return self.bus.get_qpos()
-
+    
+    def degree_to_radian(deg):
+        return math.pi * deg / 180
+    
     def move_joint(self, action):
         """
         Simulates moving the robot's joint by a certain amount.
@@ -76,10 +80,10 @@ class Robot():
         
         current_pos = self._get_current_join_positions()
         target_pos = current_pos.copy()
-        next_move = target_pos[self.join_idx] + action
+        next_move = target_pos[self.join_idx] + self.degree_to_radian(action)
         success = True
         if self.bounds[0] <= next_move and next_move <= self.bounds[1]:
-            target_pos[self.join_idx] += action
+            target_pos[self.join_idx] += self.degree_to_radian(action)
             move_join(self.bus, current_pos, target_pos, duration=2.0, steps=100)
             return success
         return False
