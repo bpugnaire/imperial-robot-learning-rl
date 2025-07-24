@@ -4,7 +4,7 @@ import random
 import time
 
 class LidOpeningEnv:
-    def __init__(self, robot, vision, action_space, angle_threshold=90):
+    def __init__(self, robot, vision, action_space, angle_threshold=80):
         """
         robot: object with move_joint(action) method
         vision: object with get_lid_angle() method
@@ -36,7 +36,7 @@ class LidOpeningEnv:
         Returns: next_state, reward, done
         """
         action = self.action_space[action_index]
-        success = self.robot.move_joint(action)
+        allowed_move = self.robot.move_joint(action)
 
         time.sleep(1)  # Wait for motion & image stabilization
         frame = self.vision.get_frame()
@@ -44,13 +44,13 @@ class LidOpeningEnv:
         print(f"Lid angle:{angle}")
         reward = self.compute_reward(angle)
         print(f"Reward collected:{reward}")
-        done = angle < self.angle_threshold
+        done = angle >= self.angle_threshold
 
         self.state = angle
-        if not success:
+        if not allowed_move:
             reward = -100
         return angle, reward, done
 
     def compute_reward(self, angle):
-        # Reward is higher the more the lid is open (lower angle)
+        # Reward is higher the more the lid is open (higher angle)
         return angle - self.state

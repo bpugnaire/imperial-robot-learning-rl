@@ -15,9 +15,9 @@ robot = DummyRobot()
 vision = VisionSystem()
 vision.start()
 actions = [-10, 0, 10]  # Degrees to rotate the joint
-state_bins = [30, 50, 70, 90]  # Bin angle into discrete states
+state_bins = [30, 50, 70, 100]  # Bin angle into discrete states
 
-env = LidOpeningEnv(robot, vision, actions)
+env = LidOpeningEnv(robot, vision, actions, angle_threshold=80)
 agent = QLearningAgent(state_bins=state_bins, num_actions=len(actions))
 
 for episode in range(100):
@@ -27,6 +27,8 @@ for episode in range(100):
     while not done:
         action = agent.choose_action(state)
         next_angle, reward, done = env.step(action)
+        if done:
+            break
         vision.set_reward(reward)
         next_state = agent.discretize_state(next_angle)
 
