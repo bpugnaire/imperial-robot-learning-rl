@@ -13,4 +13,6 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
-/build
+build/
+debugging/
+eps*.mp4
