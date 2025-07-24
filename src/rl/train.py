@@ -4,7 +4,7 @@ import time
 from src.rl.lid_opening_env import LidOpeningEnv
 from src.rl.agent import QLearningAgent
 
-from hardware.python_controller.robot_interface import DummyRobot, Robot
+from src.hardware.python_controller.robot_interface import DummyRobot, Robot
 from src.vision.vision import CubeLidVisionSystem
 
 
@@ -33,6 +33,9 @@ try:
         done = False
 
         while not done:
+            # Wait for user to press Enter before proceeding to the next action
+            input("Press Enter to perform the next action...")
+
             # The agent gives us the index of the action to take
             action_index = agent.choose_action(state)
             next_angle, reward, done = env.step(action_index)
@@ -58,7 +61,6 @@ try:
                 print("Quit signal received from vision system.")
                 quit_signal_received = True
                 break
-        
         if quit_signal_received:
             break
 
