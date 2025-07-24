@@ -13,3 +13,10 @@ dependencies = [
     "pyrealsense2-macosx; sys_platform == 'darwin'",
     "feetech-servo-sdk>=1.0.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-dir]
+"" = "."
