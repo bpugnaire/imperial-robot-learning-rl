@@ -39,22 +39,18 @@ class LidOpeningEnv:
         """
         action = self.action_space[action_index]
         allowed_move = self.robot.move_joint(action)
-        print(f"Action taken: {action} degrees, Allowed: {allowed_move}")
+        # print(f"Action taken: {action} degrees, Allowed: {allowed_move}")
         time.sleep(.1)  # Wait for motion & image stabilization
         frame = self.vision._get_frame()
         self.vision._get_lid_angle(frame)
         angle = self.vision.current_lid_angle
 
-        print(f"Lid angle:{angle}")
-        reward = self.compute_reward(angle)
-        print(f"Reward collected:{reward}")
+        # print(f"Lid angle:{angle}")
+        reward = angle  # Just return the angle for accumulation
+        # print(f"Reward collected:{reward}")
         done = (angle >= self.angle_threshold)
 
         self.state = angle
-        if not allowed_move:
-            reward = -100
+        # if not allowed_move:
+        #     reward = -100
         return angle, reward, done
-
-    def compute_reward(self, angle):
-        # Reward is higher the more the lid is open (higher angle)
-        return 1 if angle - self.state > 1 else -1

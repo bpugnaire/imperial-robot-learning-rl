@@ -36,7 +36,7 @@ def send_waypoints(bus, current_pos, target_pos, duration=2.0, steps=100):
         intermediate_pos = current_pos + (target_pos - current_pos) * (i / steps)
         bus.set_qpos(intermediate_pos)
         time.sleep(delay)
-    print("Movement complete.")
+    # print("Movement complete.")
 
 def main():
     """
@@ -63,7 +63,7 @@ def main():
 
     try:
         # --- Load the target pose from the file ---
-        print(f"Loading pose from {args.filename}...")
+        # print(f"Loading pose from {args.filename}...")
         with open(args.filename, 'r') as f:
             pose_data = json.load(f)
 
@@ -73,14 +73,14 @@ def main():
 
         # --- Move the arm ---
         # Enable torque to allow the servos to hold their position and move.
-        print("Enabling torque...")
+        # print("Enabling torque...")
         bus.set_torque(True)
         time.sleep(0.1) # Give a moment for the servos to engage.
 
         # Get the arm's current position to use as the starting point.
         current_qpos = bus.get_qpos()
-        print(f"Current position: {np.round(current_qpos, 3)}")
-        print(f"Target position:  {np.round(target_qpos, 3)}")
+        # print(f"Current position: {np.round(current_qpos, 3)}")
+        # print(f"Target position:  {np.round(target_qpos, 3)}")
 
         # Send the arm to the target position.
         send_waypoints(bus, current_qpos, target_qpos)
@@ -90,7 +90,7 @@ def main():
 
     finally:
         # This block ensures that the connection is always closed properly.
-        print("Disconnecting from bus.")
+        # print("Disconnecting from bus.")
         bus.disconnect()
 
 

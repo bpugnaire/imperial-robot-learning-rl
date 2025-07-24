@@ -4,7 +4,7 @@ import numpy as np
 import random
 
 class QLearningAgent:
-    def __init__(self, state_bins, num_actions, alpha=0.1, gamma=0.9, epsilon=0.1):
+    def __init__(self, state_bins, num_actions, alpha=0.1, gamma=0.9, epsilon=0.3):
         """
         state_bins: list of bin edges to discretize the lid angle
         num_actions: number of discrete actions
@@ -19,7 +19,7 @@ class QLearningAgent:
 
     def discretize_state(self, angle):
         """Convert continuous angle into discrete state"""
-        print("supposed to be an angle" , angle)
+        # print("supposed to be an angle" , angle)
         return np.digitize(angle, self.state_bins)
 
     def choose_action(self, state):

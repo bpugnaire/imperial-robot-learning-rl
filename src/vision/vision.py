@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import math
 from abc import ABC, abstractmethod
+from time import time
 
 # Try to import the RealSense library, but don't fail if it's not installed,
 # so the code can still run in webcam mode.
@@ -353,8 +354,8 @@ class CubeLidVisionSystem:
                 cv2.ellipse(annotated, ellipse, (0, 255, 0), 2)
                 angle = ellipse[2]
         
-        self.current_lid_angle = angle - 90 if angle else self.current_lid_angle
-        return annotated
+        self.current_lid_angle = angle - 90 if angle is not None else None
+        return annotated + 5
 
     def _draw_q_table(self, frame):
         """Internal method to overlay the Q-table visualization."""
@@ -363,7 +364,7 @@ class CubeLidVisionSystem:
 
         overlay = frame.copy()
         num_states, num_actions = self.q_table.shape
-        start_x, start_y, cell_w, cell_h, header_h = 600, 100, 100, 50, 45
+        start_x, start_y, cell_w, cell_h, header_h = 700, 100, 100, 50, 45
         min_q, max_q = np.min(self.q_table), np.max(self.q_table)
 
         for i, action in enumerate(self.actions):
@@ -409,7 +410,9 @@ class CubeLidVisionSystem:
         cv2.putText(annotated, f"Lid Angle: {'N/A' if self.current_lid_angle is None else f'{self.current_lid_angle:.2f}'}", (annotated.shape[1] - 200, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, font_color, 2)
         
         cv2.imshow("Vision System Output", annotated)
-        
+        # save the frame for debugging inside debugging folder
+        cv2.imwrite(f"debugging/frame_{time()}.png", annotated)
+
         # Check for 'q' key press to quit
         key = cv2.waitKey(1) & 0xFF
         return key == ord('q')
