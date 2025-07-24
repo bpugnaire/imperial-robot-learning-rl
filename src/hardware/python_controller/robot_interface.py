@@ -1,8 +1,8 @@
 # robot.py
-import hardware.python_controller.bus as bus
-from hardware.python_controller.reset_positon import reset_robot_position
-from hardware.python_controller.bus import FeetechBus
-from hardware.python_controller.move_join import move_join
+import src.hardware.python_controller.bus as bus
+from src.hardware.python_controller.reset_positon import reset_robot_position
+from src.hardware.python_controller.bus import FeetechBus
+from src.hardware.python_controller.move_join import move_join
 
 
 class DummyRobot:
