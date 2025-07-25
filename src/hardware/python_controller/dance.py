@@ -79,28 +79,29 @@ def main():
     bus = FeetechBus(args.port, args.ids, calib_file=args.calib)
     
     # --- The Dance Routine ---
-    # Each pose is a list of joint angles in radians, following JOINT_NAMES order.
-    # All poses should be within the JOINT_LIMITS defined above.
-    home_pose = np.array([0, 0, 0, 0, 0, 0], dtype=np.float32)
+    # Choreographed to be safe and avoid hitting the table.
+    # NOTE: For shoulder_lift and elbow_flex, negative angles move the arm UP.
+    # [shoulder_pan, shoulder_lift, elbow_flex, wrist_flex, wrist_roll, gripper]
+    home_pose = np.array([0, -0.2, -0.2, 0, 0, 0], dtype=np.float32) # Start slightly raised up
 
     dance_routine = [
-        # 1. "Wave"
-        {'pose': np.array([0, 0.5, 0.8, 0.5, -1.0, 0.5]), 'duration': 1.5},
-        {'pose': np.array([0, 0.5, 0.8, 0.5, 1.0, 0.5]), 'duration': 1.0},
-        {'pose': np.array([0, 0.5, 0.8, 0.5, -1.0, 0.5]), 'duration': 1.0},
-        {'pose': np.array([0, 0.5, 0.8, 0.5, 1.0, 0.5]), 'duration': 1.0},
+        # 1. "Look Around" - Arm is held up and pans side to side
+        {'pose': np.array([1.2, -0.5, -0.8, -0.5, 0, 0.8]), 'duration': 2.0},   # Look left
+        {'pose': np.array([-1.2, -0.5, -0.8, -0.5, 0, 0.8]), 'duration': 2.0},  # Look right
         
-        # 2. "Peek-a-boo"
-        {'pose': np.array([0, -0.5, -1.2, -1.0, 0, 0.8]), 'duration': 2.0}, # Hide
-        {'pose': np.array([0.8, 0.4, 0.5, 0, 0, 0.2]), 'duration': 1.5},   # Peek left
-        {'pose': np.array([-0.8, 0.4, 0.5, 0, 0, 0.2]), 'duration': 2.0},  # Peek right
+        # 2. "The Twist" - Wrist roll and shoulder pan combo
+        {'pose': np.array([-0.5, -0.2, -0.5, 0, 2.0, 0.2]), 'duration': 1.5}, # Twist right
+        {'pose': np.array([0.5, -0.2, -0.5, 0, -2.0, 0.2]), 'duration': 1.5}, # Twist left
+        {'pose': np.array([0, -0.2, -0.5, 0, 0, 0.2]), 'duration': 1.0}, # Center wrist
         
-        # 3. "Shimmy"
-        {'pose': np.array([-0.8, 0.2, 0.5, 0.8, 0, 0.5]), 'duration': 1.5},
-        {'pose': np.array([0.8, 0.2, 0.5, 0.8, 0, 0.5]), 'duration': 1.5},
-        
-        # 4. "Bow"
-        {'pose': np.array([0, 0.8, 1.5, 1.0, 0, 0.8]), 'duration': 2.5},
+        # 3. "High Wave" - A safer wave, keeping the arm elevated
+        {'pose': np.array([0, -0.7, -1.0, -0.8, 0, 0.5]), 'duration': 1.5}, # Lift arm up high
+        {'pose': np.array([0, -0.7, -1.0, 0.8, 0, 0.5]), 'duration': 1.0},  # Wave with wrist
+        {'pose': np.array([0, -0.7, -1.0, -0.8, 0, 0.5]), 'duration': 1.0},
+        {'pose': np.array([0, -0.7, -1.0, 0.8, 0, 0.5]), 'duration': 1.0},
+
+        # 4. "Finale Bow" - A very slight, safe bow
+        {'pose': np.array([0, 0.1, 0.2, 0.2, 0, 0.8]), 'duration': 2.5}, # A tiny, safe bow
         {'pose': home_pose, 'duration': 2.0} # Return to home
     ]
 
@@ -115,7 +116,7 @@ def main():
         # Start at the home position
         current_qpos = bus.get_qpos()
         print("Moving to home position...")
-        send_waypoints(bus, current_qpos, home_pose, duration=2.0)
+        send_waypoints(bus, current_qpos, home_pose, duration=1.0)
         time.sleep(1)
 
         # Loop the dance
@@ -140,7 +141,7 @@ def main():
         print("Cleaning up...")
         # Go to a safe, neutral position before turning off torque
         current_qpos = bus.get_qpos()
-        send_waypoints(bus, current_qpos, home_pose, duration=2.0)
+        send_waypoints(bus, current_qpos, home_pose, duration=1.0)
         bus.set_torque(False)
         bus.disconnect()
         print("Disconnected.")
